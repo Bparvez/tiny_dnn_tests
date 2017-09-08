@@ -12,6 +12,7 @@
 
 #include "tiny_dnn/tiny_dnn.h"
 
+#define DNN_USE_IMAGE_API 1
 
 /*
  * @brief rescale output to 0-100
