@@ -12,8 +12,6 @@
 
 #include "tiny_dnn/tiny_dnn.h"
 
-#define DNN_USE_IMAGE_API 1
-
 /*
  * @brief rescale output to 0-100
  *
@@ -86,6 +84,7 @@ template <typename N> void construct_net(N &nn) {
  * @note: TODO: Would this need to be changed if we change the network
  */
 void recognize(const std::string &dictionary, const std::string &src_filename) {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	//TODO: Hardcoded should read the batches.meta.txt file.
 	const std::array<const std::string, 10> names = {
 		"airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse",
@@ -108,6 +107,8 @@ void recognize(const std::string &dictionary, const std::string &src_filename) {
 	auto res = nn.predict(data);
 	std::vector<std::pair<double, int>> scores;
 
+	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+
 	// sort & print top-3
 	for (int i = 0; i < 10; i++)
 		scores.emplace_back(rescale<tiny_dnn::tanh_layer>(res[i]), i);
@@ -116,6 +117,9 @@ void recognize(const std::string &dictionary, const std::string &src_filename) {
 
 	for (int i = 0; i < 3; i++)
 		std::cout << names[scores[i].second] << "," << scores[i].first << std::endl;
+
+	std::cout << "Time elapsed = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() <<std::endl;
+
 }
 
 
